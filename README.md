@@ -11,29 +11,6 @@ Scored by F1 on the hallucinated class (`pos_label=0`). Phase-1 private LB score
   inference, rule construction, and label generation happen inside this notebook. There is no
   offline step: rerunning it end-to-end regenerates `submission.csv` from raw test inputs.
 
-## Method overview
-
-A hybrid rule-plus-judge pipeline, applied in a fixed order:
-
-1. **Deterministic rule exoskeleton** — gold-answer key joins built from public Bengali QA
-   datasets (BanglaHalluEval, TyDiQA-BN, Bangla-MMLU), an idiom/বাগধারা meaning pool, and a
-   grammar solver for সমাস / সন্ধি questions. All rules are joins from attached files;
-   ambiguous and internally contradictory keys are excluded automatically.
-2. **14B logit-margin judge** — Qwen2.5-14B-Instruct scores each row by the logit margin
-   between the "0" and "1" verdict tokens, Platt-calibrated on a 299-row labeled anchor set,
-   thresholded at 0.340. Rows not covered by rules fall back to the judge.
-3. **Math solver layers** — closed-form templates (work/rate, ratio, interest, percentage,
-   LCM, combinatorics, sympy-based algebra), weekday arithmetic, and a corruption-aware
-   operand-repair layer that recovers comma-truncated numbers via bisection.
-4. **Fact solver layers** — date verification from context, prime/BCE checks, and a
-   closed-book biography lookup over Bengali Wikipedia using multilingual-e5-base embeddings
-   (precomputed passage index attached; query encoding runs locally in-notebook).
-5. **Consistency reverts** — corpus-consensus and context-grounding guards that undo unsafe
-   flips before the final label is written.
-
-Every layer is validated against the 299-row anchor inside the notebook (assertion gates);
-the run aborts rather than silently degrading if any layer regresses.
-
 ## How to run on Kaggle
 
 1. **Open the notebook on Kaggle** (or upload `notebook.ipynb` as a new Kaggle notebook).
@@ -64,6 +41,29 @@ misattached input fails immediately with a clear message.
 - No hardcoded test IDs or answer maps anywhere; all labels derive from raw test inputs via
   normalized joins and solvers.
 - No external APIs; all inference is local to the Kaggle session.
+
+## Method overview
+
+A hybrid rule-plus-judge pipeline, applied in a fixed order:
+
+1. **Deterministic rule exoskeleton** — gold-answer key joins built from public Bengali QA
+   datasets (BanglaHalluEval, TyDiQA-BN, Bangla-MMLU), an idiom/বাগধারা meaning pool, and a
+   grammar solver for সমাস / সন্ধি questions. All rules are joins from attached files;
+   ambiguous and internally contradictory keys are excluded automatically.
+2. **14B logit-margin judge** — Qwen2.5-14B-Instruct scores each row by the logit margin
+   between the "0" and "1" verdict tokens, Platt-calibrated on a 299-row labeled anchor set,
+   thresholded at 0.340. Rows not covered by rules fall back to the judge.
+3. **Math solver layers** — closed-form templates (work/rate, ratio, interest, percentage,
+   LCM, combinatorics, sympy-based algebra), weekday arithmetic, and a corruption-aware
+   operand-repair layer that recovers comma-truncated numbers via bisection.
+4. **Fact solver layers** — date verification from context, prime/BCE checks, and a
+   closed-book biography lookup over Bengali Wikipedia using multilingual-e5-base embeddings
+   (precomputed passage index attached; query encoding runs locally in-notebook).
+5. **Consistency reverts** — corpus-consensus and context-grounding guards that undo unsafe
+   flips before the final label is written.
+
+Every layer is validated against the 299-row anchor inside the notebook (assertion gates);
+the run aborts rather than silently degrading if any layer regresses.
 
 ## Data and model sources
 
