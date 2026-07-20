@@ -86,7 +86,7 @@ the run aborts rather than silently degrading if any layer regresses.
 |---|---|
 | All input data (bundle) | https://www.kaggle.com/datasets/rafiurrahman01/bhd-all-inputs |
 | Judge model (Qwen2.5-14B-Instruct fp16) | https://www.kaggle.com/models/dipamc77/qwen2.5-14b-instruct |
-| Embedding model (multilingual-e5-base, included in bundle) | https://huggingface.co/intfloat/multilingual-e5-base |
+| Embedding model (multilingual-e5-base, included in bundle)(no need to give input for running the notebook, it is already included on All input data(bundle)) | https://huggingface.co/intfloat/multilingual-e5-base |
 
 The bundle contains the public external datasets used for rule construction
 (BanglaHalluEval, TyDiQA-BN GoldP, Bangla-MMLU, idiom pool, pattern corpus), the
