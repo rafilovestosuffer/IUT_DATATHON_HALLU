@@ -28,6 +28,21 @@ Scored by F1 on the hallucinated class (`pos_label=0`). Phase-1 private LB score
 Cell 1 audits all required inputs and prints OK/MISSING for each before anything runs, so a
 misattached input fails immediately with a clear message.
 
+## Phase-2 / held-out evaluation (for organizers)
+
+The same notebook handles both runs unchanged — only the test file differs.
+
+1. **Reproduction run:** rerun the notebook as-is (Save & Run All, GPU T4 ×2, internet OFF). It
+   reads the Phase-1 `test set.csv` from the attached bundle and regenerates the submitted
+   `submission.csv` exactly.
+2. **Held-out run:** upload the held-out CSV (columns `id, context, prompt_bn, response_bn`) as
+   an attached dataset, then edit one line — `TEST_PATH` at the top of Cell 1 — to point at it,
+   and Save & Run All again. Nothing else needs changing.
+
+The pipeline is size-agnostic: no assertion, threshold, or rule depends on row count or ids. A
+~5,000-row set completes in roughly 4–4.5 h; judge margins checkpoint every 200 rows and resume
+automatically if the session restarts.
+
 ## Runtime
 
 - ~1.5–3.5 h on T4 ×2 for the 2,516-row Phase-1 test set (the 14B judge pass dominates,
